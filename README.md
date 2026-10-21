@@ -8,6 +8,6 @@ Node 22. Ejecutar `npm ci`, `npm run dev` y `npm run build`. La salida estática
 
 La web permite solicitar cita por correo; abrir el mensaje no lo envía ni confirma la cita. El setter y la agenda no están conectados. La imagen utiliza la URL pública de la web personal existente.
 
-`PUBLIC_PATIENT_BOOKING_URL` permite añadir una agenda verificada de pacientes de forma opcional. Véase `.env.example` y `docs/OPERACION_PACIENTES.md` para publicación, migración de correo y conexiones pendientes.
+`PUBLIC_PATIENT_BOOKING_URL` permite añadir una agenda verificada de pacientes de forma opcional. Véase `.env.example`. Si no se configura, se muestra únicamente la solicitud por correo.
 
 No se incluyen cookies analíticas, almacenamiento de datos de pacientes ni formularios clínicos en esta landing.
