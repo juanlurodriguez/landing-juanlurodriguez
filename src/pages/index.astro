@@ -4,6 +4,13 @@ const email = 'contacto@juanlurodriguez.com';
 const subject = 'Solicitud de cita de fisioterapia';
 const body = 'Hola Juanlu, me gustaría solicitar una cita de fisioterapia.\n\nNombre: \nModalidad (presencial en Inca / online): \nDisponibilidad: \n\nQuedo pendiente de confirmar el día y la hora. Gracias.';
 const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const sessionEmail = (session: string, price: number, modality: string) => {
+  const message = `Hola Juanlu, me gustaría solicitar ${session.toLowerCase()}.\n\nSesión: ${session}\nTarifa: ${price} €\nModalidad: ${modality}\nNombre: \nDisponibilidad: \n\nQuedo pendiente de confirmar el día y la hora. Gracias.`;
+  return `mailto:${email}?subject=${encodeURIComponent('Solicitud de cita · ' + session)}&body=${encodeURIComponent(message)}`;
+};
+const firstEmail = sessionEmail('Primera consulta', 60, 'Presencial en Inca');
+const followUpEmail = sessionEmail('Seguimiento', 55, 'Presencial en Inca');
+const onlineEmail = sessionEmail('Consulta online', 40, 'Online por videollamada');
 let booking = '';
 try {
   const url = new URL(import.meta.env.PUBLIC_PATIENT_BOOKING_URL || '');
@@ -65,9 +72,9 @@ const schema = { '@context': 'https://schema.org', '@type': 'Person', name: 'Jua
       <section id="sesiones" class="prices-section"><div class="wrap section">
         <div class="section-heading compact"><p class="eyebrow">SESIONES Y TARIFAS</p><h2>Todo claro.<br /><em>Desde la primera visita.</em></h2></div>
         <div class="price-grid">
-          <article class="price-card featured"><p class="card-label">PARA EMPEZAR</p><h3>Primera consulta</h3><div class="price">60<span>€</span></div><p class="duration">Presencial en Inca · Unos 55 minutos</p><ul><li>Valoración inicial</li><li>Tratamiento según la valoración</li><li>Plan de ejercicios y pautas</li></ul><a href={mailto} class="button light">Solicitar primera cita <span aria-hidden="true">↗</span></a></article>
-          <article class="price-card"><p class="card-label">PARA CONTINUAR</p><h3>Seguimiento</h3><div class="price">55<span>€</span></div><p class="duration">Presencial en Inca · Unos 55 minutos</p><ul><li>Revisión de tu evolución</li><li>Tratamiento adaptado</li><li>Ajuste de ejercicios y pautas</li></ul><a href={mailto} class="button outline">Solicitar seguimiento <span aria-hidden="true">↗</span></a></article>
-          <article class="price-card"><p class="card-label">DESDE DONDE ESTÉS</p><h3>Consulta online</h3><div class="price">40<span>€</span></div><p class="duration">Por videollamada · Con cita previa</p><ul><li>Valoración y orientación</li><li>Ejercicio terapéutico guiado</li><li>Seguimiento y autocuidado</li></ul><a href={mailto} class="button outline">Solicitar consulta online <span aria-hidden="true">↗</span></a></article>
+          <article class="price-card featured"><p class="card-label">PARA EMPEZAR</p><h3>Primera consulta</h3><div class="price">60<span>€</span></div><p class="duration">Presencial en Inca · Unos 55 minutos</p><ul><li>Valoración inicial</li><li>Tratamiento según la valoración</li><li>Plan de ejercicios y pautas</li></ul><a href={firstEmail} class="button light">Solicitar primera cita <span aria-hidden="true">↗</span></a></article>
+          <article class="price-card"><p class="card-label">PARA CONTINUAR</p><h3>Seguimiento</h3><div class="price">55<span>€</span></div><p class="duration">Presencial en Inca · Unos 55 minutos</p><ul><li>Revisión de tu evolución</li><li>Tratamiento adaptado</li><li>Ajuste de ejercicios y pautas</li></ul><a href={followUpEmail} class="button outline">Solicitar seguimiento <span aria-hidden="true">↗</span></a></article>
+          <article class="price-card"><p class="card-label">DESDE DONDE ESTÉS</p><h3>Consulta online</h3><div class="price">40<span>€</span></div><p class="duration">Por videollamada · Con cita previa</p><ul><li>Valoración y orientación</li><li>Ejercicio terapéutico guiado</li><li>Seguimiento y autocuidado</li></ul><a href={onlineEmail} class="button outline">Solicitar consulta online <span aria-hidden="true">↗</span></a></article>
         </div>
         <p class="pricing-note">Atención privada para personas adultas. La primera sesión presencial incluye valoración y tratamiento; las técnicas se eligen según cada caso.</p>
       </div></section>
