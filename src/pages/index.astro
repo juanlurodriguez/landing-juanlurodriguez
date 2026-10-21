@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+const email = 'contacto@juanlurodriguez.com';
+const subject = 'Solicitud de cita de fisioterapia';
+const body = 'Hola Juanlu, me gustaría solicitar una cita de fisioterapia.\n\nNombre: \nModalidad (presencial en Inca / online): \nDisponibilidad: \n\nQuedo pendiente de confirmar el día y la hora. Gracias.';
+const mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+let booking = '';
+try {
+  const url = new URL(import.meta.env.PUBLIC_PATIENT_BOOKING_URL || '');
+  if (url.protocol === 'https:' && ['cal.com', 'app.cal.com', 'cal.eu', 'app.cal.eu'].includes(url.hostname) && url.pathname !== '/' && !url.username && !url.password) booking = url.href;
+} catch {}
+const portrait = 'https://pub-6b5e631a2e94415a999c6c8f9c26b7a3.r2.dev/juanlu.png';
+const description = 'Fisioterapia musculoesquelética en Inca y online con Juan Luis Rodríguez Ávila. Terapia manual, ejercicio terapéutico, punción seca y electropunción. Primera consulta 60 €; seguimiento 55 €; online 40 €.';
+const schema = { '@context': 'https://schema.org', '@type': 'Person', name: 'Juan Luis Rodríguez Ávila', alternateName: 'Juanlu Rodríguez', jobTitle: 'Fisioterapeuta', url: 'https://juanlurodriguez.com/', image: portrait, email, knowsAbout: ['Fisioterapia musculoesquelética', 'Terapia manual', 'Ejercicio terapéutico', 'Punción seca', 'Electropunción'] };
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#263e35" />
+    <title>Juanlu Rodríguez · Fisioterapia en Inca y online</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href="https://juanlurodriguez.com/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:title" content="Juanlu Rodríguez · Fisioterapia en Inca y online" />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content="https://juanlurodriguez.com/" />
+    <meta property="og:image" content={portrait} />
+    <script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />
+  </head>
+  <body>
+    <a class="skip" href="#contenido">Saltar al contenido</a>
+    <header class="header wrap">
+      <a class="brand" href="#inicio" aria-label="Juanlu Rodríguez, inicio">Juanlu Rodríguez<span>FISIOTERAPIA</span></a>
+      <nav aria-label="Navegación principal"><a href="#enfoque">Mi enfoque</a><a href="#sesiones">Sesiones y tarifas</a><a class="nav-cta" href={mailto}>Pedir cita <span aria-hidden="true">↗</span></a></nav>
+    </header>
+    <main id="contenido">
+      <section id="inicio" class="hero wrap">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot"></span> EN INCA, MALLORCA · TAMBIÉN ONLINE</p>
+          <h1>Entender tu dolor.<br />Volver a <em>moverte.</em></h1>
+          <p class="intro">Fisioterapia para molestias musculares y articulares, dolor de espalda y cuello y lesiones deportivas.</p>
+          <p class="hero-note">Una valoración individual, tratamiento adaptado y pautas claras para continuar fuera de la consulta.</p>
+          <div class="actions"><a class="button" href={mailto}>Solicitar cita por email <span aria-hidden="true">↗</span></a><a class="text-link" href="#sesiones">Ver sesiones y tarifas <span aria-hidden="true">↓</span></a></div>
+          <p class="micro">Se abrirá tu aplicación de correo con el mensaje preparado.<br />La cita queda pendiente de confirmación.</p>
+        </div>
+        <div class="portrait-block">
+          <div class="portrait-frame"><img src={portrait} alt="Juanlu Rodríguez, fisioterapeuta" width="800" height="1000" fetchpriority="high" /></div>
+          <div class="portrait-caption"><span>Juan Luis Rodríguez Ávila</span><span>Fisioterapeuta · Col. 2498</span></div>
+          <span class="portrait-word" aria-hidden="true">Movimiento.</span>
+        </div>
+      </section>
+      <div class="credentials"><div class="wrap credential-row"><span>ATENCIÓN INDIVIDUAL</span><span>ÁMBITO MUSCULOESQUELÉTICO</span><span>PERSONAS ADULTAS</span></div></div>
+      <section id="enfoque" class="section wrap">
+        <div class="section-heading"><p class="eyebrow">CÓMO TRABAJO</p><h2>Tres herramientas.<br /><em>Un plan para ti.</em></h2><p>La valoración guía el tratamiento. Elegimos las técnicas según tus necesidades y las combinamos con un papel activo en tu recuperación.</p></div>
+        <div class="approaches">
+          <article><span class="number">01 /</span><h3>Terapia manual</h3><p>Trabajo sobre músculos y articulaciones, adaptado a las molestias y a lo que encontramos en la valoración.</p></article>
+          <article><span class="number">02 /</span><h3>Ejercicio terapéutico</h3><p>Un plan de ejercicios ajustado a tu situación y objetivos, con pautas para saber cómo continuar entre sesiones.</p></article>
+          <article><span class="number">03 /</span><h3>Fisioterapia invasiva</h3><p>Punción seca y electropunción cuando están indicadas, tras valorar contigo su uso y explicar el procedimiento.</p></article>
+        </div>
+      </section>
+      <section id="sesiones" class="prices-section"><div class="wrap section">
+        <div class="section-heading compact"><p class="eyebrow">SESIONES Y TARIFAS</p><h2>Todo claro.<br /><em>Desde la primera visita.</em></h2></div>
+        <div class="price-grid">
+          <article class="price-card featured"><p class="card-label">PARA EMPEZAR</p><h3>Primera consulta</h3><div class="price">60<span>€</span></div><p class="duration">Presencial en Inca · Unos 55 minutos</p><ul><li>Valoración inicial</li><li>Tratamiento según la valoración</li><li>Plan de ejercicios y pautas</li></ul><a href={mailto} class="button light">Solicitar primera cita <span aria-hidden="true">↗</span></a></article>
+          <article class="price-card"><p class="card-label">PARA CONTINUAR</p><h3>Seguimiento</h3><div class="price">55<span>€</span></div><p class="duration">Presencial en Inca · Unos 55 minutos</p><ul><li>Revisión de tu evolución</li><li>Tratamiento adaptado</li><li>Ajuste de ejercicios y pautas</li></ul><a href={mailto} class="button outline">Solicitar seguimiento <span aria-hidden="true">↗</span></a></article>
+          <article class="price-card"><p class="card-label">DESDE DONDE ESTÉS</p><h3>Consulta online</h3><div class="price">40<span>€</span></div><p class="duration">Por videollamada · Con cita previa</p><ul><li>Valoración y orientación</li><li>Ejercicio terapéutico guiado</li><li>Seguimiento y autocuidado</li></ul><a href={mailto} class="button outline">Solicitar consulta online <span aria-hidden="true">↗</span></a></article>
+        </div>
+        <p class="pricing-note">Atención privada para personas adultas. La primera sesión presencial incluye valoración y tratamiento; las técnicas se eligen según cada caso.</p>
+      </div></section>
+      <section class="section wrap about" id="sobre-mi">
+        <div><p class="eyebrow">TU FISIOTERAPEUTA</p><h2>Soy Juanlu.<br /><em>Te acompaño en el proceso.</em></h2></div>
+        <div class="about-copy"><p class="lead">Mi práctica se centra en la fisioterapia musculoesquelética y deportiva.</p><p>Actualmente trabajo en atención primaria del IB-Salut. Anteriormente desarrollé mi labor en el ámbito hospitalario en el Hospital Universitario Son Llàtzer.</p><p>Combino terapia manual, ejercicio terapéutico y técnicas invasivas, con formación en punción seca y electropunción. En cada sesión dedicamos tiempo a valorar, tratar y definir qué puedes hacer después.</p><a class="text-link" href="https://www.doctoralia.es/perfil/juan-luis-rodriguez-avila">Ver mi perfil en Doctoralia <span aria-hidden="true">↗</span></a></div>
+      </section>
+      <section class="section wrap faq"><div><p class="eyebrow">ANTES DE VENIR</p><h2>Resolvemos<br /><em>lo esencial.</em></h2></div><div class="questions">
+        <details><summary>¿Cómo pido cita?</summary><p>Pulsa «Solicitar cita por email». Se abrirá tu aplicación de correo con un mensaje preparado. Añade tu nombre, si prefieres presencial u online y tu disponibilidad, y envíalo. Recibirás una respuesta para concretar la cita; enviar la solicitud no confirma una reserva.</p></details>
+        <details><summary>¿Dónde es la consulta presencial?</summary><p>En Carrer Vicenç Ensenyat, Inca, Mallorca. Al confirmar la cita recibirás las indicaciones de acceso. La atención es siempre con cita previa.</p></details>
+        <details><summary>¿Qué ocurre en la primera sesión?</summary><p>Empezamos con una valoración, continuamos con el tratamiento que corresponda y terminamos con ejercicios y pautas. La sesión presencial dura alrededor de 55 minutos.</p></details>
+        <details><summary>¿Siempre se utiliza punción?</summary><p>No. La punción seca y la electropunción son herramientas dentro del tratamiento. Se utilizan cuando están indicadas, después de la valoración y con tu consentimiento.</p></details>
+        <details><summary>¿Qué puedo trabajar en una consulta online?</summary><p>Valoración, orientación, ejercicios y seguimiento por videollamada. Si tu situación requiere atención presencial, lo hablaremos para elegir la modalidad adecuada.</p></details>
+        <details><summary>¿Qué tipo de pacientes atiendes?</summary><p>Personas adultas con problemas musculoesqueléticos. No ofrezco atención específica de suelo pélvico, fisioterapia oncológica, neurológica, pediátrica ni rehabilitación especializada de la discapacidad.</p></details>
+      </div></section>
+      <section class="contact-section" id="contacto"><div class="wrap contact-inner"><p class="eyebrow">EL PRIMER PASO</p><h2>Cuéntame cuándo<br /><em>te viene bien.</em></h2><p>Indica tu nombre, modalidad y disponibilidad.<br />Para pedir cita no necesitas enviar informes ni datos clínicos.</p><a class="button light" href={mailto}>Solicitar cita por email <span aria-hidden="true">↗</span></a>{booking && <a class="calendar-link" href={booking}>Elegir un hueco en la agenda ↗</a>}<a class="email-address" href={`mailto:${email}`}>{email}</a><p class="micro">La solicitud queda pendiente de confirmación.<br />Si el botón no abre tu correo, escribe directamente a esta dirección.</p></div></section>
+    </main>
+    <footer class="wrap footer"><div><a class="brand" href="#inicio">Juanlu Rodríguez<span>FISIOTERAPIA · COL. 2498</span></a><p>Inca, Mallorca · Consulta online</p></div><div><p>¿Buscas bienestar para tu empresa?</p><a href="https://batmotropicos.com/">Visita Batmotrópicos <span aria-hidden="true">↗</span></a></div></footer>
+    <a class="mobile-cta" href={mailto}>Solicitar cita por email <span aria-hidden="true">↗</span></a>
+  </body>
+</html>
