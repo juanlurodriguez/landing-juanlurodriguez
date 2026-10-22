@@ -1,0 +1,132 @@
+---
+const { lang = 'es' } = Astro.props;
+const en = lang === 'en';
+const t = en ? {
+  title: 'Prepare your appointment request', name: 'Your name', session: 'Session', first: 'First session', follow: 'Follow-up', modality: 'Where would you like your appointment?', clinic: 'In person in Inca', home: 'Home visit', online: 'Online consultation', town: 'Town for a home visit', availability: 'When are you available?', placeholder: 'For example: Tuesday or Thursday afternoons', source: 'How did you find me? (optional)', choose: 'Choose an option', search: 'Google search or Maps', recommendation: 'Personal recommendation', other: 'Other', prepare: 'Prepare request', note: 'This form prepares an email on your device. It does not send it or book an appointment. Please do not include medical information.', next: 'Review your request and choose how to send it', mail: 'Open email app', copy: 'Copy request', copied: 'Request copied.', failed: 'Select and copy the text above.', pending: 'Your appointment is only confirmed after we agree the date and time. Opening Gmail or Outlook shares the request with the email service you choose; you still need to send the email.', message: 'Your request', nojs: 'To request an appointment, email contacto@juanlurodriguez.com with your name, preferred appointment type and availability. For home visits, include your town.',
+} : {
+  title: 'Prepara tu solicitud de cita', name: 'Tu nombre', session: 'Sesión', first: 'Primera sesión', follow: 'Seguimiento', modality: '¿Dónde quieres tu sesión?', clinic: 'Presencial en Inca', home: 'A domicilio', online: 'Consulta online', town: 'Localidad para el domicilio', availability: '¿Cuándo te viene bien?', placeholder: 'Por ejemplo: martes o jueves por la tarde', source: '¿Cómo me encontraste? (opcional)', choose: 'Elige una opción', search: 'Búsqueda de Google o Maps', recommendation: 'Recomendación personal', other: 'Otro', prepare: 'Preparar solicitud', note: 'Este formulario prepara un email en tu dispositivo. No lo envía ni reserva una cita. No incluyas información clínica.', next: 'Revisa la solicitud y elige cómo enviarla', mail: 'Abrir aplicación de correo', copy: 'Copiar solicitud', copied: 'Solicitud copiada.', failed: 'Selecciona y copia el texto de arriba.', pending: 'La cita se confirma cuando acordemos el día y la hora. Al abrir Gmail u Outlook compartes la solicitud con el servicio de correo que elijas; todavía debes enviar el email.', message: 'Tu solicitud', nojs: 'Para solicitar cita, escribe a contacto@juanlurodriguez.com indicando tu nombre, modalidad y disponibilidad. Para domicilios, añade tu localidad.',
+};
+---
+<div class="request-box" data-appointment data-lang={lang} data-copied={t.copied} data-failed={t.failed}>
+  <h3>{t.title}</h3>
+  <p class="request-explanation">{t.note}</p>
+  <form class="request-form" hidden>
+    <label>{t.name}<input name="patientName" autocomplete="name" maxlength="100" required /></label>
+    <label>{t.modality}<select name="modality"><option value="clinic">{t.clinic}</option><option value="home">{t.home}</option><option value="online">{t.online}</option></select></label>
+    <label data-session>{t.session}<select name="session"><option value="first">{t.first} · 60 €</option><option value="follow">{t.follow} · 55 €</option></select></label>
+    <label data-town hidden>{t.town}<input name="town" autocomplete="address-level2" maxlength="100" disabled /></label>
+    <label class="request-wide">{t.availability}<textarea name="availability" rows="2" maxlength="400" placeholder={t.placeholder} required></textarea></label>
+    <label class="request-wide">{t.source}<select name="source"><option value="">{t.choose}</option><option>{t.search}</option><option>Doctoralia</option><option>{t.recommendation}</option><option>{t.other}</option></select></label>
+    <p class="request-wide request-tariff" data-tariff></p>
+    <button class="button light request-wide" type="submit">{t.prepare} <span aria-hidden="true">↗</span></button>
+  </form>
+  <div class="request-result" hidden>
+    <h3>{t.next}</h3>
+    <label>{t.message}<textarea data-message rows="10" readonly></textarea></label>
+    <div class="request-actions">
+      <a class="button light" data-mail>{t.mail}</a>
+      <a class="text-link" data-gmail target="_blank" rel="noopener noreferrer">Gmail ↗</a>
+      <a class="text-link" data-outlook target="_blank" rel="noopener noreferrer">Outlook ↗</a>
+      <button class="text-link" type="button" data-copy>{t.copy}</button>
+    </div>
+    <p class="request-explanation">{t.pending}</p>
+    <p role="status" data-status></p>
+  </div>
+  <noscript><p>{t.nojs}</p><a class="text-link" href="mailto:contacto@juanlurodriguez.com">contacto@juanlurodriguez.com</a></noscript>
+</div>
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>('[data-appointment]')) {
+    const form = box.querySelector<HTMLFormElement>('form')!;
+    const modality = form.elements.namedItem('modality') as HTMLSelectElement;
+    const session = form.elements.namedItem('session') as HTMLSelectElement;
+    const town = form.elements.namedItem('town') as HTMLInputElement;
+    const en = box.dataset.lang === 'en';
+    const result = box.querySelector<HTMLElement>('.request-result')!;
+    const message = box.querySelector<HTMLTextAreaElement>('[data-message]')!;
+    const status = box.querySelector<HTMLElement>('[data-status]')!;
+    const tariff = () => {
+      if (modality.value === 'online') return en ? 'Online session: 40 €. Duration agreed before confirmation.' : 'Sesión online: 40 €. Duración a concretar antes de confirmar.';
+      const price = session.value === 'first' ? 60 : 55;
+      if (modality.value === 'home') return en ? `Session: ${price} € + travel supplement. The total is quoted before confirmation.` : `Sesión: ${price} € + suplemento de desplazamiento. Conocerás el total antes de confirmar.`;
+      return en ? `In-person session: ${price} € · approximately 55 minutes.` : `Sesión presencial: ${price} € · unos 55 minutos.`;
+    };
+    const refresh = () => {
+      const home = modality.value === 'home';
+      box.querySelector<HTMLElement>('[data-town]')!.hidden = !home;
+      town.disabled = !home;
+      town.required = home;
+      box.querySelector<HTMLElement>('[data-session]')!.hidden = modality.value === 'online';
+      session.disabled = modality.value === 'online';
+      box.querySelector<HTMLElement>('[data-tariff]')!.textContent = tariff();
+      result.hidden = true;
+      status.textContent = '';
+    };
+    form.addEventListener('input', refresh);
+    form.addEventListener('change', refresh);
+    for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-request]')) {
+      link.addEventListener('click', () => {
+        const choice = link.dataset.request!;
+        modality.value = choice.startsWith('clinic') ? 'clinic' : choice;
+        session.value = choice === 'clinic-follow' ? 'follow' : 'first';
+        refresh();
+      });
+    }
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const data = new FormData(form);
+      const location = en ? { clinic: 'In person in Inca', home: 'Home visit', online: 'Online' } : { clinic: 'Presencial en Inca', home: 'A domicilio', online: 'Online' };
+      const lines = en ? [
+        'Hello Juanlu, I would like to request a physiotherapy appointment.', '',
+        `Name: ${data.get('patientName')}`, `Appointment type: ${location[modality.value as keyof typeof location]}`,
+        ...(modality.value !== 'online' ? [`Session: ${session.value === 'first' ? 'First session' : 'Follow-up'}`] : []),
+        tariff(), ...(modality.value === 'home' ? [`Town: ${data.get('town')}`] : []),
+        `Availability: ${data.get('availability')}`,
+        ...(data.get('source') ? [`How I found you: ${data.get('source')}`] : []), '',
+        'I understand that the date and time are subject to confirmation. Thank you.',
+      ] : [
+        'Hola Juanlu, me gustaría solicitar una cita de fisioterapia.', '',
+        `Nombre: ${data.get('patientName')}`, `Modalidad: ${location[modality.value as keyof typeof location]}`,
+        ...(modality.value !== 'online' ? [`Sesión: ${session.value === 'first' ? 'Primera sesión' : 'Seguimiento'}`] : []),
+        tariff(), ...(modality.value === 'home' ? [`Localidad: ${data.get('town')}`] : []),
+        `Disponibilidad: ${data.get('availability')}`,
+        ...(data.get('source') ? [`Cómo te encontré: ${data.get('source')}`] : []), '',
+        'Quedo pendiente de confirmar el día y la hora. Gracias.',
+      ];
+      const body = lines.join('\n');
+      const subject = en ? 'Physiotherapy appointment request' : 'Solicitud de cita de fisioterapia';
+      const email = 'contacto@juanlurodriguez.com';
+      message.value = body;
+      box.querySelector<HTMLAnchorElement>('[data-mail]')!.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      box.querySelector<HTMLAnchorElement>('[data-gmail]')!.href = `https://mail.google.com/mail/?${new URLSearchParams({view:'cm',fs:'1',to:email,su:subject,body})}`;
+      box.querySelector<HTMLAnchorElement>('[data-outlook]')!.href = `https://outlook.live.com/mail/0/deeplink/compose?${new URLSearchParams({to:email,subject,body})}`;
+      result.hidden = false;
+      message.focus();
+    });
+    box.querySelector<HTMLButtonElement>('[data-copy]')!.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(message.value);
+        status.textContent = box.dataset.copied!;
+      } catch {
+        message.focus(); message.select();
+        status.textContent = box.dataset.failed!;
+      }
+    });
+    refresh();
+    form.hidden = false;
+  }
+</script>
+<style>
+  .request-box{max-width:670px;margin:30px auto 0;text-align:left;border:1px solid #75876c;padding:28px;border-radius:4px}
+  .request-box h3{font-size:25px;line-height:1.3}.request-explanation{font-size:12px;line-height:1.7;color:#d6ddcf;margin:14px 0 22px}
+  .request-form{display:grid;grid-template-columns:1fr 1fr;gap:20px}.request-box [hidden]{display:none!important}
+  label{display:flex;flex-direction:column;gap:9px;font-size:13px;line-height:1.5}.request-wide{grid-column:1/-1}
+  input,select,textarea{width:100%;min-width:0;font:inherit;font-size:16px;padding:12px;color:#263e35;background:#f8f6f1;border:1px solid #b8c7ad;border-radius:2px;line-height:1.5}
+  textarea{resize:vertical}.request-tariff{font-size:13px;line-height:1.65;color:#d6ddcf}
+  button{cursor:pointer;font-family:inherit}.request-actions{display:flex;flex-wrap:wrap;gap:20px;align-items:center;margin-top:20px}
+  .request-actions button{color:inherit;background:transparent;border:0;border-bottom:1px solid #a6afa0}
+  input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #d7b783;outline-offset:3px}
+  .request-result{border-top:1px solid #75876c;margin-top:25px;padding-top:25px}.request-result label{margin-top:20px}
+  [data-status]{font-size:13px;margin-top:12px}
+  @media(max-width:700px){.request-box{padding:20px}.request-form{grid-template-columns:1fr}.request-wide{grid-column:auto}.request-box h3{font-size:23px}.request-actions{gap:16px}}
+</style>
